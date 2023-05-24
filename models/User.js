@@ -40,9 +40,13 @@ UserSchema.pre("save", async function (next) {
 //this generates the token for us
 UserSchema.methods.createJWT = function () {
   //once we create user, we want token. what we want to send back goes in .sign({}). must include the secret, last is options.
-  return jwt.sign({ userId: this._id, name: this.name }, "jwtSecret", {
-    expiresIn: "30d",
-  });
+  return jwt.sign(
+    { userId: this._id, name: this.name },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_LIFETIME,
+    }
+  );
 };
 
 module.exports = mongoose.model("User", UserSchema);
