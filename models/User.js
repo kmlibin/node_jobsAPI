@@ -49,6 +49,12 @@ UserSchema.methods.createJWT = function () {
   );
 };
 
+UserSchema.methods.checkPassword = async function (candidatePassword) {
+  //compare the passwords
+  const isMatch = await bcrypt.compare(candidatePassword, this.password)
+  return isMatch;
+}
+
 module.exports = mongoose.model("User", UserSchema);
 
 //this was all in the auth controller - token was in place of the createJWT, we returned token to frontend.

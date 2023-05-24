@@ -35,8 +35,14 @@ const login = async (req, res) => {
   }
   //go through users to see if there is one matching the provided email. 
   const user = await User.findOne({email})
+  //compare password
+  const isPasswordCorrect = await user.checkPassword(password)
+  if(!isPasswordCorrect){
+    throw new UnauthenticatedError('invalid password')
+  }
+  //if no user, throw error
   if(!user){
-    throw new UnauthenticatedError('invalid credentials')
+    throw new UnauthenticatedError('invalid email')
   }
   //user must exist, so create token
   const token = user.createJWT();
