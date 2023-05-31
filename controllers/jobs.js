@@ -9,7 +9,7 @@ const getAllJobs = async (req, res) => {
 };
 
 const getSingleJob = async (req, res) => {
-  //looking for job id param, comes from user object we create in th emiddleware
+  //looking for job id param, comes from user object we create in the auth middleware
   const {
     user: { userId },
     params: { id: jobId },
@@ -52,7 +52,16 @@ const updateJob = async (req, res) => {
 };
 
 const deleteJob = async (req, res) => {
-  res.send("delete job");
+  const {user: {userId}, params: {id: jobId}} = req;
+
+  const job = await Job.findOneAndRemove({
+    _id: jobId, createdBy: userId
+  })
+
+  if(!job) {
+    throw new NotFoundError('no job with that id')
+  }
+  res.status(StatusCodes.OK).send();
 };
 
 module.exports = { getAllJobs, getSingleJob, createJob, updateJob, deleteJob };
