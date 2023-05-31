@@ -12,8 +12,7 @@ const auth = async (req, res, next) => {
   const token = authHeader.split(" ")[1];
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-    // console.log(payload);
-    // console.log(req)
+    
     //attach the user to the job routes...remember, we get this (payload) info from our user...goes through the controller,
     //which uses the User schema
     //the usreSchema creates the userId and name props
