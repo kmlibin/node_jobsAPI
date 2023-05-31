@@ -10,15 +10,19 @@ const getAllJobs = async (req, res) => {
 
 const getSingleJob = async (req, res) => {
   //looking for job id param, comes from user object we create in th emiddleware
-  const { user:{userId}, params:{id: jobId}} = req
+  const {
+    user: { userId },
+    params: { id: jobId },
+  } = req;
   //find job id and make sure it matches the user id
   const job = await Job.findOne({
-    _id: jobId, createdBy: userId
-  })
-  if(!job) {
-    throw new NotFoundError(`no job with id of ${jobID}`)
+    _id: jobId,
+    createdBy: userId,
+  });
+  if (!job) {
+    throw new NotFoundError(`no job with id of ${jobID}`);
   }
-  res.status(StatusCodes.OK).json({job});
+  res.status(StatusCodes.OK).json({ job });
 };
 
 const createJob = async (req, res) => {
@@ -29,7 +33,22 @@ const createJob = async (req, res) => {
 };
 
 const updateJob = async (req, res) => {
-  res.send("update job");
+  //also grab the body (input), company and position
+  const {
+    body: { company, position },
+    user: { userId },
+    params: { id: jobId },
+  } = req;
+  //check for values
+  if (company === "" || position === "") {
+    throw new BadRequestError("fields cannot be empty");
+  }
+  const job = await Job.findOneAndUpdate({_id: jobId, createdBy: userId}, req.body, { new: true, runValidators: true})
+
+  if(!job) {
+    throw new NotFoundError('no job with that id')
+  }
+  res.status(StatusCodes.OK).json({job})
 };
 
 const deleteJob = async (req, res) => {
