@@ -1,9 +1,11 @@
-const Job = require('../models/Job');
-const {StatusCodes} = require('http-status-codes');
-const {BadRequestError, NotFoundError} = require('../errors');
+const Job = require("../models/Job");
+const { StatusCodes } = require("http-status-codes");
+const { BadRequestError, NotFoundError } = require("../errors");
 
 const getAllJobs = async (req, res) => {
-  res.send("get all jobs");
+  //user on every reqest becuase we placed our auth middleware in front of all of our jobs routes
+  const jobs = await Job.find({ createdBy: req.user.userId }).sort("createdAt");
+  res.status(StatusCodes.OK).json({ jobs, count: jobs.length });
 };
 
 const getSingleJob = async (req, res) => {
@@ -12,9 +14,9 @@ const getSingleJob = async (req, res) => {
 
 const createJob = async (req, res) => {
   //creating a new prop on req.body called createdBy, b/c we have access to userid and user on the req.body
-  req.body.createdBy = req.user.userId
+  req.body.createdBy = req.user.userId;
   const job = await Job.create(req.body);
-  res.status(StatusCodes.CREATED).json({job})
+  res.status(StatusCodes.CREATED).json({ job });
 };
 
 const updateJob = async (req, res) => {
