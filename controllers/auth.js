@@ -10,13 +10,14 @@ const { BadRequestError, UnauthenticatedError } = require("../errors/index");
 //libraries
 
 
-
 const register = async (req, res) => {
+  
   //check if there are values, if not, throw an error. mongoose does this automatically - code works without this if block, but err mess is larger
-  const { name, email, password } = req.body;
-  if (!name || !email || !password) {
-    throw new BadRequestError("please provide name, email, and password");
-  }
+  //took this out because am handling it in errorhandlermiddleware now
+  // const { name, email, password } = req.body;
+  // if (!name || !email || !password) {
+  //   throw new BadRequestError("please provide name, email, and password");
+  // }
   //there is a pre function that hashes the password for the db - but console logs here all show the "secret" password
   const user = await User.create({ ...req.body });
   const token = user.createJWT();
